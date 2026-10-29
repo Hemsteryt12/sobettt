@@ -1,0 +1,13 @@
+{
+  "name": "yanyana",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Shareable real-time chat rooms for friends.",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "three": "^0.186.1",
+    "ws": "^8.18.0"
+  }
+}

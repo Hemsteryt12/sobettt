@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101b1b">
+  <meta name="description" content="YanYana Arena'da arkadaşlarınla çevrimiçi karşılaş.">
+  <title>Arena | YanYana</title>
+  <link rel="stylesheet" href="/arena.css">
+</head>
+<body>
+  <main class="arena-shell">
+    <canvas id="worldCanvas" aria-label="Üç boyutlu çok oyunculu voxel arena"></canvas>
+    <div class="world-wash" aria-hidden="true"></div>
+
+    <header class="topline">
+      <a class="wordmark" href="/" aria-label="YanYana sohbete dön"><span>y.</span> YANYANA</a>
+      <div class="arena-id"><i></i><span id="mapLabel">FIELD 01</span><b>VOXEL ARENA</b></div>
+      <div class="network-state"><i id="networkDot"></i><span id="networkLabel">HAZIR</span><b id="playerCount">0</b><span>OYUNCU</span></div>
+      <div class="top-actions">
+        <button class="hud-button" id="shopToggle" type="button">✦ <span id="goldValue">100</span></button>
+        <button class="hud-button" id="crosshairToggle" type="button">NİŞANGÂH</button>
+        <button class="hud-button" id="fullscreenToggle" type="button" aria-label="Tam ekran">⛶</button>
+      </div>
+      <a class="back-link" href="/" aria-label="Sohbete dön"><span aria-hidden="true">↙</span><span>Sohbet</span></a>
+    </header>
+
+    <section class="leaderboard" aria-label="Skor tablosu">
+      <div class="board-title"><span>CANLI SKOR</span><span id="roundClock">00:00</span></div>
+      <ol id="leaderboard"></ol>
+    </section>
+
+    <section class="match-hud" aria-label="Oyuncu durumu">
+      <div class="health-readout"><span>SAĞLIK</span><strong id="healthValue">100</strong><div class="health-track"><i id="healthFill"></i></div></div>
+      <div class="score-readout"><span>SKOR</span><strong id="killValue">0</strong><small>ELEME</small></div>
+      <div class="ammo-readout"><span>EKİPMAN</span><strong id="weaponHudName">ARC PULSE</strong><small id="weaponHudInfo">ORTA · HASSAS</small></div>
+      <div class="slot-readout" id="slotReadout">1 · ANA SİLAH</div>
+    </section>
+
+    <div class="reticle" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="hit-flash" id="hitFlash" aria-hidden="true"></div>
+    <div class="event-toast" id="eventToast" role="status" aria-live="polite"></div>
+
+    <section class="lobby" id="lobby" aria-labelledby="lobbyTitle">
+      <div class="lobby-orbit" aria-hidden="true"><span></span><i></i></div>
+      <p class="lobby-kicker"><span>YANYANA</span> / MULTIPLAYER TEST FIELD</p>
+      <h1 id="lobbyTitle">Voxel<br><em>Frontier</em></h1>
+      <p class="lobby-copy" id="lobbyCopy">Blokların arasına gir. Takımını kur. Arenada yerini al.</p>
+      <div class="loadout-picker">
+        <fieldset class="loadout-group">
+          <legend>01 / OPERATÖR</legend>
+          <div class="loadout-options">
+            <button class="loadout-option is-selected" type="button" data-character="scout" aria-pressed="true"><span>01</span><strong>SCOUT</strong><small>90 HP · HIZLI</small></button>
+            <button class="loadout-option" type="button" data-character="vanguard" aria-pressed="false"><span>02</span><strong>VANGUARD</strong><small>110 HP · DENGELİ</small></button>
+            <button class="loadout-option" type="button" data-character="bulwark" aria-pressed="false"><span>03</span><strong>BULWARK</strong><small>145 HP · ZIRHLI</small></button>
+          </div>
+        </fieldset>
+        <fieldset class="loadout-group">
+          <legend>02 / HARİTA VE EKİPMAN</legend>
+          <label class="loadout-search"><span>⌕</span><input id="loadoutSearch" type="search" placeholder="Harita veya silah ara..." autocomplete="off"></label>
+          <div class="map-options" id="mapOptions" aria-label="Harita seçimi"></div>
+          <div class="slot-picker">
+            <label>1 · ANA SİLAH<select id="slot1Select"></select></label>
+            <label>2 · TABANCA<select id="slot2Select"></select></label>
+            <label>3 · BOMBA<select id="slot3Select"></select></label>
+            <label>4 · BIÇAK<select id="slot4Select"></select></label>
+          </div>
+        </fieldset>
+      </div>
+      <button id="joinButton" class="join-button" type="button"><span>ARENA'YA KATIL</span><i aria-hidden="true">↗</i></button>
+      <p class="lobby-foot" id="lobbyFoot">WASD HAREKET <span>·</span> FARE İLE BAK <span>·</span> TIKLA VE ATEŞ ET</p>
+      <div class="auth-message is-hidden" id="authMessage">Önce YanYana'ya giriş yap.<a href="/">Giriş ekranına git <span>↗</span></a></div>
+    </section>
+
+    <section class="shop-panel is-hidden" id="shopPanel" aria-label="Silah mağazası">
+      <header><div><span class="panel-kicker">ARENA EKONOMİSİ</span><h2>Atölye & Kasa</h2></div><button class="panel-close" id="shopClose" type="button" aria-label="Kapat">×</button></header>
+      <p class="wallet-line">Bakiyen <strong><span id="shopGold">100</span> altın</strong></p>
+      <button class="crate-button" id="openCase" type="button"><span>✦</span><b>CS Tarzı Silah Kasası</b><small>50 ALTIN · AĞIRLIKLI NADİRLİK ŞANSI</small></button>
+      <label class="shop-search"><span>⌕</span><input id="shopSearch" type="search" placeholder="Silah ara..." autocomplete="off"></label>
+      <div class="shop-items" id="shopItems"></div>
+      <p class="shop-note">Vuruş: +10 altın · Kafa vuruşu: +20 bonus · Eleme: +25 · MVP: +25. Kasa nadirlik oranları: %70 standart, %24 nadir, %5 destansı, %1 efsanevi.</p>
+    </section>
+
+    <section class="crosshair-panel is-hidden" id="crosshairPanel" aria-label="Nişangâh ayarları">
+      <header><strong>Nişangâhını ayarla</strong><button class="panel-close" id="crosshairClose" type="button" aria-label="Kapat">×</button></header>
+      <label>Boyut <input id="crosshairSize" type="range" min="2" max="12" value="4"></label>
+      <label>Aralık <input id="crosshairGap" type="range" min="2" max="14" value="5"></label>
+      <label>Renk <input id="crosshairColor" type="color" value="#f8ffe9"></label>
+      <button class="reset-crosshair" id="crosshairReset" type="button">Varsayılana dön</button>
+    </section>
+
+    <section class="arena-chat" aria-label="Oyun içi yazılı sohbet">
+      <header><div><span class="chat-status-dot"></span><strong>Oyun sohbeti</strong><small>Mikrofonsuz yazılı sohbet</small></div><button id="chatCollapse" type="button" aria-label="Sohbeti küçült">−</button></header>
+      <div class="arena-chat-messages" id="arenaChatMessages" aria-live="polite"></div>
+      <form id="arenaChatForm"><input id="arenaChatInput" maxlength="500" placeholder="Mesaj yaz..." autocomplete="off"><button type="submit" aria-label="Gönder">↑</button></form>
+    </section>
+
+    <section class="death-overlay is-hidden" id="deathOverlay" role="status" aria-live="assertive">
+      <span>SAHADAN DÜŞTÜN</span><strong>YENİDEN DOĞUYORSUN</strong><small id="respawnCountdown">2</small>
+    </section>
+    <div class="shop-toast" id="shopToast" role="status" aria-live="polite"></div>
+
+    <div class="crosshair-hint" id="crosshairHint"><span>ESC</span> Fareyi serbest bırak</div>
+    <div class="touch-controls" id="touchControls" aria-label="Dokunmatik oyun kontrolleri">
+      <div class="joystick" id="joystick"><span></span><i></i></div>
+      <button class="touch-fire" id="touchFire" type="button" aria-label="Ateş et"><span>FIRE</span><i>+</i></button>
+    </div>
+    <div class="connection-toast" id="connectionToast" role="status" aria-live="polite"></div>
+  </main>
+  <script type="module" src="/arena.js"></script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f3ee">
+  <meta name="description" content="Arkadaşlarınla paylaşabileceğin özel sohbet odaları.">
+  <title>YanYana — Arkadaşlarınla aynı odada</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="YanYana ana sayfa">
+        <span class="brand-icon" aria-hidden="true">y.</span>
+        <span>yanyana</span>
+      </a>
+      <div class="connection" role="status">
+        <span class="connection-dot"></span>
+        <span id="connectionLabel">Bağlanıyor</span>
+      </div>
+      <a class="arena-link" href="/arena"><span aria-hidden="true">▧</span> OYNA</a>
+      <div class="account-bar is-hidden" id="accountBar">
+        <span id="accountName"></span>
+        <button id="logoutButton" type="button">Çıkış</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="intro">
+        <div>
+          <p class="eyebrow"><span class="sparkle">✳</span> ARKADAŞLARINLA AYNI YERDE</p>
+          <h1>Yan yana,<br><span>sohbet başlasın.</span></h1>
+          <p class="intro-copy">Adın ve parolanla giriş yap, sohbete katıl.</p>
+        </div>
+      </section>
+
+      <section class="invite-card" aria-label="Oda davet bağlantısı">
+        <div class="invite-icon" aria-hidden="true">↗</div>
+        <div class="invite-details">
+          <span class="invite-label">ARKADAŞLARINA GÖNDER</span>
+          <input id="roomLink" type="text" readonly aria-label="Oda davet bağlantısı">
+        </div>
+        <span class="room-code">2 KANAL</span>
+        <button class="copy-button" id="copyLink" type="button"><span aria-hidden="true">▢</span> Bağlantıyı kopyala</button>
+      </section>
+
+      <section class="chat-layout" aria-label="Sohbet odası">
+        <aside class="people-panel">
+          <div class="people-heading">
+            <div>
+              <span class="panel-eyebrow">ODA</span>
+              <h2>Çevrimiçi</h2>
+            </div>
+            <span class="people-count" id="driverCount">0</span>
+          </div>
+          <div class="profile-card">
+            <span class="profile-avatar" id="profileAvatar">?</span>
+            <div class="profile-fields">
+              <strong id="profileDisplayName"></strong>
+              <small id="profileUsername"></small>
+            </div>
+          </div>
+          <div class="people-divider"><span>ŞU AN ODADA</span><i></i></div>
+          <div class="people-list" id="driverList" aria-live="polite"></div>
+          <section class="voice-panel" aria-label="Sesli sohbet">
+            <div class="voice-heading"><span class="voice-icon" aria-hidden="true">♫</span><div><strong>Sesli sohbet</strong><small id="voiceStatus">Arkadaşlarınla konuş</small></div></div>
+            <div class="voice-controls">
+              <button class="voice-join" id="voiceJoin" type="button">Sese katıl</button>
+              <button class="voice-control" id="voiceMute" type="button" aria-label="Mikrofonu kapat" title="Mikrofonu kapat" disabled>Mic</button>
+              <button class="voice-control" id="voiceLeave" type="button" aria-label="Sesli sohbetten ayrıl" title="Sesli sohbetten ayrıl" disabled>×</button>
+            </div>
+            <div class="screen-share-controls">
+              <button class="screen-share-button" id="shareScreen" type="button" disabled>Ekranını paylaş</button>
+              <button class="screen-share-stop is-hidden" id="stopScreenShare" type="button">Paylaşımı durdur</button>
+              <small id="screenShareStatus">Ekran paylaşmak için sesli odaya katıl.</small>
+            </div>
+            <div class="screen-share-grid" id="screenShareGrid" aria-live="polite"></div>
+          </section>
+          <div class="privacy-note">
+            <span aria-hidden="true">✦</span>
+            <p>Bu bağlantıya sahip olan herkes odaya katılabilir. Bağlantıyı yalnızca arkadaşlarınla paylaş.</p>
+          </div>
+        </aside>
+
+        <section class="conversation" aria-label="Mesajlar">
+          <div class="conversation-header">
+            <div class="conversation-title">
+              <span class="room-avatar" aria-hidden="true">✳</span>
+              <div><h2 id="activeChannelTitle">Sohbet</h2><span>Arkadaşlarınla yazış.</span></div>
+            </div>
+            <div class="conversation-actions">
+              <button class="reset-chat-button is-hidden" id="resetChatButton" type="button" title="Bu kanalın sohbetini temizle">Temizle</button>
+              <div class="online-label"><span></span><b id="chatOnlineCount">0</b> çevrimiçi</div>
+            </div>
+          </div>
+          <nav class="channel-tabs" aria-label="Sohbet kanalları">
+            <button type="button" class="channel-tab is-active" data-channel="sohbet" aria-current="page"># Sohbet</button>
+            <button type="button" class="channel-tab" data-channel="kodlar"># Kodlar</button>
+            <button type="button" class="channel-tab" data-channel="sesli">♫ Sesli Oda</button>
+          </nav>
+          <div class="chat-messages" id="chatMessages" aria-live="polite" aria-relevant="additions">
+            <div class="chat-empty"><span aria-hidden="true">☁</span><strong>Oda hazır!</strong><p>Arkadaşların gelince mesajlar burada görünür.</p></div>
+          </div>
+          <form class="chat-form" id="chatForm">
+            <label class="sr-only" for="chatInput">Mesajın</label>
+            <input id="chatInput" maxlength="500" placeholder="#sohbet kanalına mesaj yaz..." autocomplete="off">
+            <span class="enter-hint">ENTER ↵</span>
+            <button type="submit" aria-label="Mesajı gönder"><span aria-hidden="true">↑</span></button>
+          </form>
+          <p class="chat-caption">MESAJLAR 1 SAAT SONRA OTOMATİK SİLİNİR <span>✦</span></p>
+        </section>
+      </section>
+    </main>
+
+    <footer><span class="footer-brand">yanyana<span>.</span></span><span>Bir bağlantı paylaş, aynı sohbette buluşun.</span></footer>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="name-overlay" id="authOverlay">
+    <section class="name-dialog" aria-labelledby="authTitle">
+      <span class="name-dialog-mark" aria-hidden="true">y.</span>
+      <p class="panel-eyebrow">YAN YANA · ÖZEL SOHBET</p>
+      <h2 id="authTitle">Sohbete katıl</h2>
+      <p id="authDescription">Hesabına giriş yap veya yeni hesap oluştur.</p>
+      <div class="auth-tabs" id="authTabs">
+        <button type="button" class="auth-tab is-active" data-auth-mode="login">Giriş yap</button>
+        <button type="button" class="auth-tab" data-auth-mode="register">Kayıt ol</button>
+      </div>
+      <form class="auth-form" id="loginForm">
+        <label for="loginName">Adın</label>
+        <input id="loginName" name="name" maxlength="24" autocomplete="username" required>
+        <label for="loginPassword">Parola</label>
+        <input id="loginPassword" name="password" type="password" autocomplete="current-password" required>
+        <button type="submit">Giriş yap <span aria-hidden="true">→</span></button>
+      </form>
+      <form class="auth-form is-hidden" id="registerForm">
+        <label for="registerName">Adın</label>
+        <input id="registerName" name="name" maxlength="24" autocomplete="nickname" placeholder="Örn. Ece" required>
+        <label for="registerPassword">Parola</label>
+        <input id="registerPassword" name="password" type="password" autocomplete="new-password" required>
+        <button type="submit">Hesap oluştur <span aria-hidden="true">→</span></button>
+      </form>
+      <form class="auth-form is-hidden" id="setupAdminForm">
+        <label for="adminName">Yönetici adı</label>
+        <input id="adminName" name="name" maxlength="24" autocomplete="nickname" placeholder="Örn. Yönetici" required>
+        <label for="adminPassword">Yönetici parolası <small>(en az 12 karakter)</small></label>
+        <input id="adminPassword" name="password" type="password" minlength="12" maxlength="128" autocomplete="new-password" required>
+        <button type="submit">Yönetici hesabını oluştur <span aria-hidden="true">→</span></button>
+      </form>
+      <small id="authNote">Parolalar güvenli özet olarak saklanır.</small>
+    </section>
+  </div>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
